@@ -1,5 +1,5 @@
 document.querySelector('#colorSelect').innerHTML=['red','blue','green','yellow'].map(color=>`<option value="${color}">${color}</option>`).join('')
-const ws=new WebSocket('ws://localhost:8000');
+const ws=new WebSocket((location.protocol=="http:"?'ws://':'wss://')+(location+'').split('/')[2]);
 ws.addEventListener('open', function (event) {
 	console.log('connected!')
 });
