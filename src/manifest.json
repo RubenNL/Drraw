@@ -1,0 +1,23 @@
+{
+  "name": "Drraw",
+  "short_name": "Drraw",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0eb73f",
+  "theme_color": "#317EFB",
+  "description": "Drraw",
+  "icons": [{
+	"src": "images/logo_512.png",
+	"sizes": "512x512",
+	"type": "image/png",
+	"purpose": "any maskable"
+  },{
+	"src": "images/logo_256.png",
+	"sizes": "256x256",
+	"type": "image/png"
+  },{
+	"src": "images/logo_128.png",
+	"sizes": "128x128",
+	"type": "image/png"
+  }]
+}

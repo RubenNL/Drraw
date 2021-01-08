@@ -1,0 +1,28 @@
+<head>
+	<script>
+		if(window.location.protocol=='http:' && !window.location.port) window.location.protocol='https:' //port om te testen of de heroku wordt geladen. bij heroku is de port leeg.
+	</script>
+	<meta name="theme-color" content="#317EFB"/>
+	<link rel="icon" type="image/png" href="/images/logo_32.png">
+	<link rel="apple-touch-icon" href="/images/logo_32.png">
+	<link rel="manifest" href="/manifest.json">
+	<meta name="Description" content="Drraw">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<noscript>JS is niet ingeschakeld.</noscript>
+	<select id="colorSelect" onchange="updateColor(this)"></select>
+	<canvas height="800px" width="800px"></canvas>
+</body>
+<style>
+	canvas {
+		position:fixed;
+		border:1px solid red;
+	}
+</style>
+<script src="index.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+}
+</script>
