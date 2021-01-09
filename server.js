@@ -17,11 +17,6 @@ function shouldCompress (req, res) {
 app.use(express.static('output'))
 
 require('./server/server.js')(app,wss).then(()=>{
-	app.use('/code',(req,res,next)=>{
-		filename=url.parse(req.url).pathname.split('/').pop()
-		if(['data.db','vapidKeys.json'].includes(filename)) res.send('No access to that file! This file contains secrets used for sending notifications, or contains the server data.')
-		else next()
-	})
 	app.use('/code',express.static(__dirname,{index:false}))
 	app.use('/code', serveIndex(__dirname));
 })

@@ -12,6 +12,7 @@ ws.send=message=>ws.oldSend(JSON.stringify(message))
 ws.addEventListener('open', function (event) {
 	console.log('connected!')
 	ws.send({name:"testname"})
+	setInterval(()=>ws.send({}),45000) //keepalive for heroku: https://devcenter.heroku.com/articles/http-routing#timeouts
 });
 ws.addEventListener('close',event=>{
 	if(event.reason) alert('verbinding verbroken:\n'+event.reason)
