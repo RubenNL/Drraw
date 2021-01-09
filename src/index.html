@@ -11,13 +11,20 @@
 </head>
 <body>
 	<noscript>JS is niet ingeschakeld.</noscript>
-	<select id="colorSelect" onchange="updateColor(this)"></select>
+	<select id="color"></select>
+	<select id="width"></select>
+	<button id="start">start</button>
+	<span id="word"></span><br>
 	<canvas height="800px" width="800px"></canvas>
+	<div id="chat">chat</div>
+	<input id="chatInput">
 </body>
 <style>
 	canvas {
-		position:fixed;
 		border:1px solid red;
+	}
+	#chat {
+		float: right;
 	}
 </style>
 <script src="index.js"></script>

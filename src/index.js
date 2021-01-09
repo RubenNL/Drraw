@@ -1,29 +1,36 @@
-document.querySelector('#colorSelect').innerHTML=['red','blue','green','yellow'].map(color=>`<option value="${color}">${color}</option>`).join('')
-const ws=new WebSocket((location.protocol=="http:"?'ws://':'wss://')+(location+'').split('/')[2]);
+document.querySelector('#color').innerHTML=['red','blue','green','yellow'].map(color=>`<option value="${color}">${color}</option>`).join('')
+document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20].map(width=>`<option value="${width}">${width}</option>`).join('')
+document.querySelector('#start').onclick=()=>ws.send({gameAction:'start'})
+document.querySelector('#chatInput').onkeydown=event=>{
+	if(event.key!='Enter') return;
+	ws.send({chat:document.querySelector('#chatInput').value})
+	document.querySelector('#chatInput').value='';
+}
+const ws=new WebSocket((location.protocol=="http:"?'ws://':'wss://')+(location+'').split('/')[2]+'/?game='+location.hash.split('#')[1]);
+ws.oldSend=ws.send;
+ws.send=message=>ws.oldSend(JSON.stringify(message))
 ws.addEventListener('open', function (event) {
 	console.log('connected!')
+	ws.send({name:"testname"})
 });
-ws.addEventListener('message', function (event) {
+ws.addEventListener('close',event=>{
+	if(event.reason) alert('verbinding verbroken:\n'+event.reason)
+	else alert('verbinding verbroken, geen reason opgegeven.')
+})
+ws.addEventListener('message',event=>{
 	console.log('Message from server ', event.data);
 	data=JSON.parse(event.data)
-	switch(data.action) {
-		case 'draw':
-			draw(data.positions.first,data.positions.second);
-			break;
-		case 'clear':
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			break;
-		case 'color':
-			line.strokeStyle=data.color;
-			break;
-	}	
+	if(data.draw) draw(data.draw)
+	if(data.clear) ctx.clearRect(0, 0, canvas.width, canvas.height);
+	if(data.words) ws.send({word:prompt('welk woord?\n'+data.words.join('/'))})
+	if(data.word) document.querySelector('#word').innerText=data.word
+	if(data.chat) document.querySelector('#chat').innerHTML+=`<span><b>${data.chat.from}</b>${data.chat.message}</b></span><br>`
 });
 
 document.body.style.margin = 0;
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 let pos = { x: 0, y: 0 };
-let line = {lineWidth: 5,strokeStyle:'red'}
 canvas.addEventListener('mousemove', send);
 canvas.addEventListener('mousedown', setPosition);
 canvas.addEventListener('mouseenter', setPosition);
@@ -41,17 +48,19 @@ function send(e) {
 	first=JSON.parse(JSON.stringify(pos));
 	setPosition(e);
 	second=pos;
-	ws.send(JSON.stringify({action:'draw',positions:{first:first,second:second}}))
+	ws.send({draw:{
+		first:first,
+		second:second,
+		color:document.querySelector('#color').value,
+		width:document.querySelector('#width').value
+	}})
 }
-function draw(first,second) {
+function draw({first,second,color,width}) {
 	ctx.beginPath();
-	ctx.lineWidth = line.lineWidth;
+	ctx.lineWidth = width;
 	ctx.lineCap = 'round';
-	ctx.strokeStyle = line.strokeStyle;
+	ctx.strokeStyle = color;
 	ctx.moveTo(first.x, first.y);
 	ctx.lineTo(second.x, second.y);
 	ctx.stroke();
-}
-function updateColor(event) {
-	ws.send(JSON.stringify({action:'color',color:event.value}))
 }
