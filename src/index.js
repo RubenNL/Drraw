@@ -1,4 +1,16 @@
-document.querySelector('#color').innerHTML=['red','blue','green','yellow'].map(color=>`<option value="${color}">${color}</option>`).join('')
+const gameId=location.hash.split('#')[1]||prompt('gameId?',Math.random().toString(36).substring(7))
+if(!gameId) {
+	alert('geen game ID!')
+	throw new Error()
+}
+location.hash='#'+gameId
+const name=window.sessionStorage.getItem('name')||prompt('naam?')
+if(!name) {
+	alert('geen naam!')
+	throw new Error()
+}
+window.sessionStorage.setItem('name',name)
+document.querySelector('#color').innerHTML=['red','blue','green','yellow','white'].map(color=>`<option value="${color}">${color}</option>`).join('')
 document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20].map(width=>`<option value="${width}">${width}</option>`).join('')
 document.querySelector('#start').onclick=()=>ws.send({gameAction:'start'})
 document.querySelector('#chatInput').onkeydown=event=>{
@@ -6,12 +18,12 @@ document.querySelector('#chatInput').onkeydown=event=>{
 	ws.send({chat:document.querySelector('#chatInput').value})
 	document.querySelector('#chatInput').value='';
 }
-const ws=new WebSocket((location.protocol=="http:"?'ws://':'wss://')+(location+'').split('/')[2]+'/?game='+location.hash.split('#')[1]);
+let id=0;
+const ws=new WebSocket((location.protocol=="http:"?'ws://':'wss://')+(location+'').split('/')[2]+'/?game='+gameId);
 ws.oldSend=ws.send;
 ws.send=message=>ws.oldSend(JSON.stringify(message))
 ws.addEventListener('open', function (event) {
-	console.log('connected!')
-	ws.send({name:"testname"})
+	ws.send({name})
 	setInterval(()=>ws.send({}),45000) //keepalive for heroku: https://devcenter.heroku.com/articles/http-routing#timeouts
 });
 ws.addEventListener('close',event=>{
@@ -21,14 +33,30 @@ ws.addEventListener('close',event=>{
 ws.addEventListener('message',event=>{
 	console.log('Message from server ', event.data);
 	data=JSON.parse(event.data)
+	if(data.id) id=data.id;
 	if(data.draw) draw(data.draw)
 	if(data.clear) ctx.clearRect(0, 0, canvas.width, canvas.height);
-	if(data.words) ws.send({word:prompt('welk woord?\n'+data.words.join('/'))})
+	if(data.words) ws.send({word:prompt('kies een woord:\nvoorbeelden:\n'+data.words.join('/'))})
 	if(data.word) document.querySelector('#word').innerText=data.word
-	if(data.chat) document.querySelector('#chat').innerHTML+=`<span><b>${data.chat.from}</b>${data.chat.message}</b></span><br>`
+	if(data.timer) document.querySelector('#timer').innerText=data.timer
+	if(data.chat) {
+		const chatDiv=document.querySelector('#chat')
+		chatDiv.innerHTML+=`<span><b>${data.chat.from}</b>: ${data.chat.message}</b></span><br>`
+		chatDiv.scrollTop = chatDiv.scrollHeight;
+	}
+	if(data.players) {
+		players=data.players;
+		document.querySelector('#players').innerHTML=players.map(player=>`
+			<div class="player ${player.id==id?"me":"other"} ${player.correct?"correct":"incorrect"} ${player.drawer?"drawer":"notdrawing"}">
+				name: ${player.name}<br>
+				score: ${player.score}<br>
+			</div>
+		`).join('')
+	}
 });
 
-document.body.style.margin = 0;
+document.querySelector('#chat').style.height=document.querySelector('canvas').height-document.querySelector('#chatInput').offsetHeight	;
+document.querySelector('#players').style.height=document.querySelector('canvas').height;
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 let pos = { x: 0, y: 0 };

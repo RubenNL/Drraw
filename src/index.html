@@ -8,28 +8,42 @@
 	<link rel="manifest" href="/manifest.json">
 	<meta name="Description" content="Drraw">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drraw</title>
 </head>
 <body>
 	<noscript>JS is niet ingeschakeld.</noscript>
-	<select id="color"></select>
-	<select id="width"></select>
+	<button onclick="localStorage.clear();window.location.hash='';window.location.reload();">reset storage</button>
+	kleur:<select id="color"></select>
+	lijndikte:<select id="width"></select>
 	<button id="start">start</button>
-	<span id="word"></span><br>
+	Woord: <b><span id="word"></span></b>
+	<br>
+	<span id="timer"></span>
+	<div id="players"></div>
 	<canvas height="800px" width="800px"></canvas>
-	<div id="chat">chat</div>
+	<div id="chat"></div>
 	<input id="chatInput">
 </body>
 <style>
 	canvas {
 		border:1px solid red;
+		float:left;
 	}
 	#chat {
-		float: right;
+		overflow-y:scroll;
+	}
+	#players {
+		float:left;
+		width:25%;
+	}
+	.correct {
+		background-color: green;
+	}
+	.drawer {
+		background-color: yellow !important;
 	}
 </style>
 <script src="index.js"></script>
 <script>
-if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
 </script>
