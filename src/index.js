@@ -10,9 +10,10 @@ if(!name) {
 	throw new Error()
 }
 window.sessionStorage.setItem('name',name)
-document.querySelector('#color').innerHTML=['red','blue','green','yellow','white'].map(color=>`<option value="${color}">${color}</option>`).join('')
-document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20].map(width=>`<option value="${width}">${width}</option>`).join('')
+document.querySelector('#color').innerHTML=['red','blue','green','yellow','white','black'].map(color=>`<option value="${color}">${color}</option>`).join('')
+document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20,50,100,200,400].map(width=>`<option value="${width}">${width}</option>`).join('')
 document.querySelector('#start').onclick=()=>ws.send({gameAction:'start'})
+document.querySelector('#clear').onclick=()=>ws.send({gameAction:'clear'})
 document.querySelector('#chatInput').onkeydown=event=>{
 	if(event.key!='Enter') return;
 	ws.send({chat:document.querySelector('#chatInput').value})
@@ -35,7 +36,6 @@ ws.addEventListener('message',event=>{
 	data=JSON.parse(event.data)
 	if(data.id) id=data.id;
 	if(data.draw) draw(data.draw)
-	if(data.clear) ctx.clearRect(0, 0, canvas.width, canvas.height);
 	if(data.words) ws.send({word:prompt('kies een woord:\nvoorbeelden:\n'+data.words.join('/'))})
 	if(data.word) document.querySelector('#word').innerText=data.word
 	if(data.timer) document.querySelector('#timer').innerText=data.timer
@@ -53,8 +53,16 @@ ws.addEventListener('message',event=>{
 			</div>
 		`).join('')
 	}
+	switch(data.action) {
+		case 'start':
+			break;
+		case 'clear':
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			break;
+		case 'endDraw':
+			break;
+	}
 });
-
 document.querySelector('#chat').style.height=document.querySelector('canvas').height-document.querySelector('#chatInput').offsetHeight	;
 document.querySelector('#players').style.height=document.querySelector('canvas').height;
 const canvas = document.querySelector('canvas');
@@ -63,10 +71,10 @@ let pos = { x: 0, y: 0 };
 canvas.addEventListener('mousemove', send);
 canvas.addEventListener('mousedown', setPosition);
 canvas.addEventListener('mouseenter', setPosition);
-const rect = canvas.getBoundingClientRect(),
-scaleX = canvas.width / rect.width,
-scaleY = canvas.height / rect.height;
 function setPosition(evt) {
+	const rect = canvas.getBoundingClientRect()
+	scaleX = canvas.width / rect.width,
+	scaleY = canvas.height / rect.height;
 	pos={
 		x: (evt.clientX - rect.left) * scaleX,
 		y: (evt.clientY - rect.top) * scaleY

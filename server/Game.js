@@ -29,10 +29,10 @@ module.exports=class Game {
 					if(player.correct) player.send({chat:{from:'GAME',message:'nope. geen gratis punten :)'}})
 					else {
 						this.sendAll({chat:{from:'GAME',message:player.name+' heeft het juiste woord geraden!'}})
-						this.sendPlayerStats();
 						player.score+=this.timer;
 						player.correct=true;
 						player.send({word:this.word})
+						this.sendPlayerStats();
 						if(this.players.every(player=>player.correct)) this.endDraw()
 					}
 				} else this.sendAll({chat:{from:player.name,message:message.chat}})
@@ -40,7 +40,7 @@ module.exports=class Game {
 			if(message.draw&&this.drawer==player) this.sendAll({draw:message.draw})
 			if(message.word&&this.drawer==player) {
 				this.word=message.word;
-				this.sendAll({word:this.word.split('').map(char=>'_').join(' ')})
+				this.sendAll({action:'clear',word:this.word.split('').map(char=>'_').join(' ')})
 				this.drawer.send({word:this.word})
 				this.interval=setInterval(()=>{
 					this.timer--;
@@ -54,13 +54,17 @@ module.exports=class Game {
 					this.sendAll({action:'start'})
 					this.nextDrawer();
 					break;
+				case 'clear':
+					if(this.drawer!=player) return
+					this.sendAll({action:'clear'})
+					break;
 			}
 		})
 		player.on('close',()=>{
 			this.players.splice(this.players.indexOf(player), 1);
 			if(this.closed) return;
 			this.closed=true;
-			this.players.forEach(player=>player.close(4322,player.name+' left!'));
+			this.players.forEach(sendTo=>sendTo.close(4322,player.name+' left!'));
 			clearTimeout(this.interval);
 			this.delete();
 		})
