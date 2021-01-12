@@ -98,14 +98,16 @@ function setPosition(evt) {
 }
 function click(evt) {
 	setPosition(evt)
+	let color=document.querySelector('#color').value;
+	if(document.querySelector('#erase').checked) color='white'
 	if(document.querySelector('#flood').checked) ws.send({draw:{
 		action:'flood',
-		color:document.querySelector('#color').value,
+		color,
 		pos
 	}})
 	else ws.send({draw:{
 		action:'dot',
-		color:document.querySelector('#color').value,
+		color,
 		width:document.querySelector('#width').value,
 		pos
 	}})
