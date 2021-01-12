@@ -1,17 +1,11 @@
-import modulepreload from 'rollup-plugin-modulepreload';
 import del from 'rollup-plugin-delete'
 import fg from 'fast-glob';
 import {terser} from 'rollup-plugin-terser';
 import copy from 'rollup-plugin-copy'
-import css from 'rollup-plugin-css-only';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import minifyHTML from 'rollup-plugin-minify-html-literals';
 const production=process.env.NODE_ENV=="production"
 console.log("ENVIRONMENT:",production?'prod':'dev')
-function shouldPreload({ code }) {
-	//return !!code && code.includes('markdown-element');
-	return true;
-}
 export default {
 	input: 'src/index.js',
 	treeshake:production,
@@ -28,7 +22,6 @@ export default {
 	plugins: [
 		del({targets: 'output/*',runOnce:true}),
 		nodeResolve({moduleDirectories:['node_modules','src']}),
-		css({output: 'bundle.css'}),
 		copy({
 			targets: [
 				{src:'src/images/*',dest:'output/images'},
@@ -39,11 +32,6 @@ export default {
 				{src:'node_modules/dialog-polyfill/dist/dialog-polyfill.css',dest:'output'},
 				{src:'node_modules/@fortawesome/fontawesome-free/sprites',dest:'output/node_modules/@fortawesome/fontawesome-free'},
 			]
-		}),
-		modulepreload({
-			prefix: '',
-			index: 'output/index.html',
-			shouldPreload
 		}),
 		...production?[minifyHTML(),terser()]:[
 			{
