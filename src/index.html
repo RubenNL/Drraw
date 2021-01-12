@@ -8,6 +8,7 @@
 	<link rel="manifest" href="/manifest.json">
 	<meta name="Description" content="Drraw">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/dialog-polyfill.css" />
     <title>Drraw</title>
 </head>
 <body>
@@ -24,6 +25,8 @@
 	<canvas height="800px" width="800px"></canvas>
 	<div id="chat"></div>
 	<input id="chatInput">
+	<dialog>
+	</dialog>
 </body>
 <style>
 	canvas {
@@ -35,7 +38,6 @@
 	}
 	#players {
 		float:left;
-		width:25%;
 	}
 	.correct {
 		background-color: green;
@@ -44,7 +46,7 @@
 		background-color: yellow !important;
 	}
 </style>
-<script src="index.js"></script>
+<script type="module" src="index.js"></script>
 <script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
 </script>

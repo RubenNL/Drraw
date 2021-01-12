@@ -35,7 +35,8 @@ export default {
 				{src:'src/manifest.json',dest:'output'},
 				{src:'src/service-worker.js',dest:'output'},
 				{src:'src/index.html',dest:'output'},
-				{src:'src/robots.txt',dest:'output'}
+				{src:'src/robots.txt',dest:'output'},
+				{src:'node_modules/dialog-polyfill/dist/dialog-polyfill.css',dest:'output'},
 			]
 		}),
 		modulepreload({

@@ -1,3 +1,6 @@
+import dialogPolyfill from 'dialog-polyfill'
+const dialog = document.querySelector('dialog');
+dialogPolyfill.registerDialog(dialog);
 const gameId=location.hash.split('#')[1]||prompt('gameId?',Math.random().toString(36).substring(7))
 if(!gameId) {
 	alert('geen game ID!')
@@ -32,11 +35,13 @@ ws.addEventListener('close',event=>{
 	else alert('verbinding verbroken, geen reason opgegeven.')
 })
 ws.addEventListener('message',event=>{
-	console.log('Message from server ', event.data);
-	data=JSON.parse(event.data)
+	const data=JSON.parse(event.data)
 	if(data.id) id=data.id;
 	if(data.draw) draw(data.draw)
-	if(data.words) ws.send({word:prompt('kies een woord:\nvoorbeelden:\n'+data.words.join('/'))})
+	if(data.words) {
+		dialog.innerHTML=data.words.map(word=>`<button onclick="wordClick('${word}')">${word}</button>`).join('')
+		dialog.showModal();
+	}
 	if(data.word) document.querySelector('#word').innerText=data.word
 	if(data.timer) document.querySelector('#timer').innerText=data.timer
 	if(data.chat) {
@@ -63,18 +68,24 @@ ws.addEventListener('message',event=>{
 			break;
 	}
 });
+window.wordClick=word=>{
+	ws.send({word});
+	dialog.close();
+}
 document.querySelector('#chat').style.height=document.querySelector('canvas').height-document.querySelector('#chatInput').offsetHeight	;
 document.querySelector('#players').style.height=document.querySelector('canvas').height;
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 let pos = { x: 0, y: 0 };
 canvas.addEventListener('mousemove', send);
+canvas.addEventListener('touchmove', e=>send({buttons:1,clientX:e.touches[0].clientX,clientY:e.touches[0].clientY}));
+canvas.addEventListener('touchstart', e=>setPosition({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY}));
 canvas.addEventListener('mousedown', setPosition);
 canvas.addEventListener('mouseenter', setPosition);
 function setPosition(evt) {
 	const rect = canvas.getBoundingClientRect()
-	scaleX = canvas.width / rect.width,
-	scaleY = canvas.height / rect.height;
+	const scaleX = canvas.width / rect.width;
+	const scaleY = canvas.height / rect.height;
 	pos={
 		x: (evt.clientX - rect.left) * scaleX,
 		y: (evt.clientY - rect.top) * scaleY
@@ -82,9 +93,9 @@ function setPosition(evt) {
 }
 function send(e) {
 	if (e.buttons !== 1) return;
-	first=JSON.parse(JSON.stringify(pos));
+	const first=JSON.parse(JSON.stringify(pos));
 	setPosition(e);
-	second=pos;
+	const second=pos;
 	ws.send({draw:{
 		first:first,
 		second:second,
