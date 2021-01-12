@@ -4,24 +4,21 @@ module.exports=class Game {
 		this.players=[]
 		this.drawer=null;
 		this.word='';
-		this.drawerId=0;
-		this.closed=false;
 		this.interval='';
 		this.addPlayer(player)
+		this.replay=[];
 	}
 	addPlayer(player) {
 		player.score=0;
-		if(this.drawer) {
-			player.close(4321,'game al gestart!')
-			return
-		}
 		this.players.push(player)
 		player.send({id:this.players.indexOf(player)})
 		this.sendPlayerStats();
+		if(this.drawer) this.replay.forEach(action=>player.send({draw:action}))
 		player.on('message',message=>{
 			message=JSON.parse(message)
 			if(message.name) {
 				player.name=message.name;
+				this.sendAll({chat:{from:'GAME',message:player.name+' joined the game!'}})
 				this.sendPlayerStats();
 			}
 			if(message.chat) {
@@ -37,8 +34,12 @@ module.exports=class Game {
 					}
 				} else this.sendAll({chat:{from:player.name,message:message.chat}})
 			}
-			if(message.draw&&this.drawer==player) this.sendAll({draw:message.draw})
+			if(message.draw&&this.drawer==player) {
+				this.replay.push(message.draw)
+				this.sendAll({draw:message.draw})
+			}
 			if(message.word&&this.drawer==player) {
+				this.replay=[];
 				this.word=message.word;
 				this.sendAll({action:'clear',word:this.word.split('').map(char=>'_').join(' ')})
 				this.drawer.send({word:this.word})
@@ -57,22 +58,26 @@ module.exports=class Game {
 				case 'clear':
 					if(this.drawer!=player) return
 					this.sendAll({action:'clear'})
+					this.replay=[];
 					break;
 			}
 		})
 		player.on('close',()=>{
 			this.players.splice(this.players.indexOf(player), 1);
-			if(this.closed) return;
-			this.closed=true;
-			this.players.forEach(sendTo=>sendTo.close(4322,player.name+' left!'));
-			clearTimeout(this.interval);
-			this.delete();
+			this.sendAll({chat:{from:'GAME',message:player.name+' left the game!'}})
+			this.sendPlayerStats();
+			if(player==this.drawer) this.nextDrawer();
 		})
 	}
 	nextDrawer() {
-		this.drawerId++;
-		if(!this.players[this.drawerId]) this.drawerId=0;
-		this.drawer=this.players[this.drawerId]
+		clearTimeout(this.interval);
+		if(this.players.length==0) {
+			this.delete();
+			return;
+		}
+		let drawerId=this.players.indexOf(this.drawer)+1;
+		if(!this.players[drawerId]) drawerId=0;
+		this.drawer=this.players[drawerId]
 		this.drawer.send({words:grabWords(3)})
 		this.players.forEach(player=>player.correct=false)
 		this.drawer.correct=true;
