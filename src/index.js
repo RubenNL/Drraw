@@ -1,4 +1,6 @@
 import dialogPolyfill from 'dialog-polyfill'
+import flood from './flood.js'
+import 'fa-icons';
 const dialog = document.querySelector('dialog');
 dialogPolyfill.registerDialog(dialog);
 const gameId=location.hash.split('#')[1]||prompt('gameId?',Math.random().toString(36).substring(7))
@@ -13,7 +15,7 @@ if(!name) {
 	throw new Error()
 }
 window.sessionStorage.setItem('name',name)
-document.querySelector('#color').innerHTML=['red','blue','green','yellow','white','black'].map(color=>`<option value="${color}">${color}</option>`).join('')
+document.querySelector('#color').innerHTML=['red','blue','green','yellow','black'].map(color=>`<option value="${color}">${color}</option>`).join('')
 document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20,50,100,200,400].map(width=>`<option value="${width}">${width}</option>`).join('')
 document.querySelector('#start').onclick=()=>ws.send({gameAction:'start'})
 document.querySelector('#clear').onclick=()=>ws.send({gameAction:'clear'})
@@ -82,7 +84,9 @@ canvas.addEventListener('touchmove', e=>send({buttons:1,clientX:e.touches[0].cli
 canvas.addEventListener('touchstart', e=>setPosition({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY}));
 canvas.addEventListener('mousedown', setPosition);
 canvas.addEventListener('mouseenter', setPosition);
+canvas.addEventListener('click',click);
 function setPosition(evt) {
+	if (evt.buttons !== 1) return;
 	const rect = canvas.getBoundingClientRect()
 	const scaleX = canvas.width / rect.width;
 	const scaleY = canvas.height / rect.height;
@@ -90,20 +94,45 @@ function setPosition(evt) {
 		x: (evt.clientX - rect.left) * scaleX,
 		y: (evt.clientY - rect.top) * scaleY
 	}
+	
+}
+function click(evt) {
+	setPosition(evt)
+	if(document.querySelector('#flood').checked) ws.send({draw:{
+		action:'flood',
+		color:document.querySelector('#color').value,
+		pos
+	}})
+	else ws.send({draw:{
+		action:'dot',
+		color:document.querySelector('#color').value,
+		width:document.querySelector('#width').value,
+		pos
+	}})
 }
 function send(e) {
 	if (e.buttons !== 1) return;
+	if(document.querySelector('#flood').checked) return
+	let color=document.querySelector('#color').value;
+	if(document.querySelector('#erase').checked) color='white'
 	const first=JSON.parse(JSON.stringify(pos));
 	setPosition(e);
 	const second=pos;
 	ws.send({draw:{
+		action:'line',
 		first:first,
 		second:second,
-		color:document.querySelector('#color').value,
+		color:color,
 		width:document.querySelector('#width').value
 	}})
 }
-function draw({first,second,color,width}) {
+function draw({action,...data}) {
+	console.log(action)
+	if(action=='flood') flood(data,canvas)
+	if(action=="line") drawLine(data)
+	if(action=="dot") drawDot(data)
+}
+function drawLine({first,second,color,width}) {
 	ctx.beginPath();
 	ctx.lineWidth = width;
 	ctx.lineCap = 'round';
@@ -111,4 +140,10 @@ function draw({first,second,color,width}) {
 	ctx.moveTo(first.x, first.y);
 	ctx.lineTo(second.x, second.y);
 	ctx.stroke();
+}
+function drawDot({pos,width,color}) {
+	ctx.beginPath();
+	ctx.arc(pos.x,pos.y,width/2,2*Math.PI,false)
+	ctx.fillStyle=color;
+	ctx.fill();
 }

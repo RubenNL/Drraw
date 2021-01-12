@@ -18,6 +18,9 @@
 	kleur:<select id="color"></select>
 	lijndikte:<select id="width"></select>
 	<button id="start">start</button>
+	<label><input type="radio" id="flood" name="action"><fa-icon class="fas fa-fill"></fa-icon></label>
+	<label><input type="radio" id="draw" name="action" checked><fa-icon class="fas fa-pencil-alt"></fa-icon></label>
+	<label><input type="radio" id="erase" name="action"><fa-icon class="fas fa-eraser"></fa-icon></label>
 	Woord: <b><span id="word"></span></b>
 	<br>
 	<span id="timer"></span>
@@ -29,6 +32,12 @@
 	</dialog>
 </body>
 <style>
+	[name="action"]:checked + fa-icon {
+		background-color:red;
+	}
+	[name="action"] {
+		display:none
+	}
 	canvas {
 		border:1px solid red;
 		float:left;

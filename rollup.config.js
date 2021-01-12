@@ -37,6 +37,7 @@ export default {
 				{src:'src/index.html',dest:'output'},
 				{src:'src/robots.txt',dest:'output'},
 				{src:'node_modules/dialog-polyfill/dist/dialog-polyfill.css',dest:'output'},
+				{src:'node_modules/@fortawesome/fontawesome-free/sprites',dest:'output/node_modules/@fortawesome/fontawesome-free'},
 			]
 		}),
 		modulepreload({
