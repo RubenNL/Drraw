@@ -17,7 +17,6 @@ module.exports=class AutoDisconnect {
 	}
 	resetTimeout=()=>{
 		clearTimeout(this.disconnectTimeout)
-		console.log('resetTimeout')
 		this.disconnectTimeout=setTimeout(()=>this.ws.close(4321,'Te lang inactief!'),1000*60*3);
 	}
 }
