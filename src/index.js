@@ -17,7 +17,14 @@ if(!name) {
 window.sessionStorage.setItem('name',name)
 document.querySelector('#color').innerHTML=['red','blue','green','yellow','black'].map(color=>`<option value="${color}">${color}</option>`).join('')
 document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20,50,100,200,400].map(width=>`<option value="${width}">${width}</option>`).join('')
-document.querySelector('#start').onclick=()=>ws.send({gameAction:'start'})
+document.querySelector('#start').onclick=()=>{
+	const timer=parseInt(prompt('seconde per beurt?'))
+	if(!timer||timer<5) {
+		alert('Ongeldige tijd!')
+		return
+	}
+	ws.send({start:{timer}})
+}
 document.querySelector('#clear').onclick=()=>ws.send({gameAction:'clear'})
 document.querySelector('#chatInput').onkeydown=event=>{
 	if(event.key!='Enter') return;
@@ -62,6 +69,7 @@ ws.addEventListener('message',event=>{
 	}
 	switch(data.action) {
 		case 'start':
+			document.querySelector('#start').disabled=true;
 			break;
 		case 'clear':
 			ctx.clearRect(0, 0, canvas.width, canvas.height);

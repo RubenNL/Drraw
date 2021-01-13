@@ -7,6 +7,7 @@ module.exports=class Game {
 		this.interval='';
 		this.addPlayer(player)
 		this.replay=[];
+		this.startTimer=0;
 	}
 	addPlayer(player) {
 		player.score=0;
@@ -41,7 +42,8 @@ module.exports=class Game {
 			if(message.word&&this.drawer==player) {
 				this.replay=[];
 				this.word=message.word;
-				this.sendAll({action:'clear',word:this.word.split('').map(char=>'_').join(' ')})
+				this.players.forEach(player=>player.correct=false)
+				this.sendAll({action:'clear',word:this.word.split('').map(char=>'_').join(' '),chat:{from:'GAME',message:player.name+' heeft een woord gekozen!'}})
 				this.drawer.send({word:this.word})
 				this.interval=setInterval(()=>{
 					this.timer--;
@@ -49,12 +51,12 @@ module.exports=class Game {
 					if(this.timer==0) this.endDraw();
 				},1000)
 			}
+			if(message.start&&!this.drawer) {
+				this.startTimer=message.start.timer;
+				this.sendAll({action:'start'})
+				this.nextDrawer();
+			}
 			switch(message.gameAction) {
-				case 'start':
-					if(this.drawer) return;
-					this.sendAll({action:'start'})
-					this.nextDrawer();
-					break;
 				case 'clear':
 					if(this.drawer!=player) return
 					this.sendAll({action:'clear'})
@@ -79,10 +81,9 @@ module.exports=class Game {
 		if(!this.players[drawerId]) drawerId=0;
 		this.drawer=this.players[drawerId]
 		this.drawer.send({words:grabWords(3)})
-		this.players.forEach(player=>player.correct=false)
 		this.drawer.correct=true;
-		this.timer=60;
-		this.sendAll({timer:this.drawer.name+' Kiest een woord...'})
+		this.timer=this.startTimer;
+		this.sendAll({timer:this.drawer.name+' Kiest een woord...',chat:{from:'GAME',message:player.name+' Kiest een woord...'}})
 		this.sendPlayerStats();
 	}
 	endDraw() {
