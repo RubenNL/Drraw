@@ -1,9 +1,15 @@
 const Game=require('./Game');
+const AutoDisconnect=require('./AutoDisconnect')
 games={}
 module.exports=(app,wss)=>{
 	wss.on('connection',(ws,req)=>{
-		ws.oldSend=ws.send;
-		ws.send=message=>ws.oldSend(JSON.stringify(message))
+		ws.autoDisconnect=new AutoDisconnect(ws)
+		ws.send=(_super=>{ //rewrite to always JSON stringify(source: https://stackoverflow.com/a/49862009)
+			return function() {
+				arguments[0]=JSON.stringify(arguments[0])
+				return _super.apply(this, arguments);
+			}
+		})(ws.send);
 		ws.gameId=req.url.split('=')[1];
 		if(!games[ws.gameId]) {
 			games[ws.gameId]=new Game(ws)

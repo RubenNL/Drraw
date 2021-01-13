@@ -59,8 +59,7 @@ ws.addEventListener('message',event=>{
 		chatDiv.scrollTop = chatDiv.scrollHeight;
 	}
 	if(data.players) {
-		players=data.players;
-		document.querySelector('#players').innerHTML=players.map(player=>`
+		document.querySelector('#players').innerHTML=data.players.map(player=>`
 			<div class="player ${player.id==id?"me":"other"} ${player.correct?"correct":"incorrect"} ${player.drawer?"drawer":"notdrawing"}">
 				name: ${player.name}<br>
 				score: ${player.score}<br>

@@ -43,6 +43,7 @@ module.exports=class Game {
 				this.replay=[];
 				this.word=message.word;
 				this.players.forEach(player=>player.correct=false)
+				this.drawer.correct=true;
 				this.sendAll({action:'clear',word:this.word.split('').map(char=>'_').join(' '),chat:{from:'GAME',message:player.name+' heeft een woord gekozen!'}})
 				this.drawer.send({word:this.word})
 				this.interval=setInterval(()=>{
@@ -81,9 +82,8 @@ module.exports=class Game {
 		if(!this.players[drawerId]) drawerId=0;
 		this.drawer=this.players[drawerId]
 		this.drawer.send({words:grabWords(3)})
-		this.drawer.correct=true;
 		this.timer=this.startTimer;
-		this.sendAll({timer:this.drawer.name+' Kiest een woord...',chat:{from:'GAME',message:player.name+' Kiest een woord...'}})
+		this.sendAll({timer:this.drawer.name+' Kiest een woord...',chat:{from:'GAME',message:this.drawer.name+' Kiest een woord...'}})
 		this.sendPlayerStats();
 	}
 	endDraw() {
