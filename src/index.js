@@ -35,7 +35,7 @@ let id=0;
 const ws=new WebSocket((location.protocol=="http:"?'ws://':'wss://')+(location+'').split('/')[2]+'/?game='+gameId);
 ws.oldSend=ws.send;
 ws.send=message=>ws.oldSend(JSON.stringify(message))
-ws.addEventListener('open', function (event) {
+ws.addEventListener('open', ()=>{
 	ws.send({name})
 	setInterval(()=>ws.send({}),45000) //keepalive for heroku: https://devcenter.heroku.com/articles/http-routing#timeouts
 });

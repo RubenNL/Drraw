@@ -1,6 +1,6 @@
 const Game=require('./Game');
 const AutoDisconnect=require('./AutoDisconnect')
-games={}
+let games={}
 module.exports=(app,wss)=>{
 	wss.on('connection',(ws,req)=>{
 		ws.autoDisconnect=new AutoDisconnect(ws)

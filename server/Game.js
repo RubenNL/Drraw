@@ -44,7 +44,7 @@ module.exports=class Game {
 				this.word=message.word;
 				this.players.forEach(player=>player.correct=false)
 				this.drawer.correct=true;
-				this.sendAll({action:'clear',word:this.word.split('').map(char=>'_').join(' '),chat:{from:'GAME',message:player.name+' heeft een woord gekozen!'}})
+				this.sendAll({action:'clear',word:this.word.split('').map(()=>'_').join(' '),chat:{from:'GAME',message:player.name+' heeft een woord gekozen!'}})
 				this.drawer.send({word:this.word})
 				this.interval=setInterval(()=>{
 					this.timer--;

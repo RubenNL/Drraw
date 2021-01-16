@@ -7,7 +7,6 @@ const server = http.createServer(app);
 const wss=new WebSocket.Server({server});
 const compression = require('compression')
 const serveIndex = require('serve-index');
-const url = require('url');
 app.use(compression({filter:shouldCompress}))
 function shouldCompress (req, res) {
   if (req.headers['x-no-compression']) return false

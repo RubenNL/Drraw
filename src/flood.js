@@ -38,7 +38,7 @@ function colorMatch(a, b) {
 }
 
 function floodFill(imageData, newColor, x, y) {
-	const {width, height, data} = imageData
+	const {width, height} = imageData
 	const stack = []
 	const baseColor = getColorAtPixel(imageData, x, y)
 	let operator = {x, y}
