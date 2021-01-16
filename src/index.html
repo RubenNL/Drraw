@@ -1,56 +1,54 @@
 <head>
 	<script>
-		if(window.location.protocol=='http:' && !window.location.port) window.location.protocol='https:' //port om te testen of de heroku wordt geladen. bij heroku is de port leeg.
+		if (window.location.protocol == 'http:' && !window.location.port) window.location.protocol = 'https:' //port om te testen of de heroku wordt geladen. bij heroku is de port leeg.
 	</script>
-	<meta name="theme-color" content="#317EFB"/>
-	<link rel="icon" type="image/png" href="/images/logo_32.png">
-	<link rel="apple-touch-icon" href="/images/logo_32.png">
-	<link rel="manifest" href="/manifest.json">
-	<meta name="Description" content="Drraw">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/dialog-polyfill.css" />
-    <title>Drraw</title>
+	<meta name="theme-color" content="#317EFB" />
+	<link rel="icon" type="image/png" href="/images/logo_32.png" />
+	<link rel="apple-touch-icon" href="/images/logo_32.png" />
+	<link rel="manifest" href="/manifest.json" />
+	<meta name="Description" content="Drraw" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" type="text/css" href="/dialog-polyfill.css" />
+	<title>Drraw</title>
 </head>
 <body>
 	<noscript>JS is niet ingeschakeld.</noscript>
 	<button onclick="localStorage.clear();window.location.hash='';window.location.reload();">reset storage(DEBUG)</button>
 	<button id="clear">clear screen</button>
-	kleur:<span id="color"></span>
-	lijndikte:<select id="width"></select>
+	kleur:<span id="color"></span> lijndikte:<select id="width"></select>
 	<button id="start">start</button>
-	<label><input type="radio" id="flood" name="action"><fa-icon class="fas fa-fill"></fa-icon></label>
-	<label><input type="radio" id="draw" name="action" checked><fa-icon class="fas fa-pencil-alt"></fa-icon></label>
-	<label><input type="radio" id="erase" name="action"><fa-icon class="fas fa-eraser"></fa-icon></label>
+	<label><input type="radio" id="flood" name="action" /><fa-icon class="fas fa-fill"></fa-icon></label>
+	<label><input type="radio" id="draw" name="action" checked /><fa-icon class="fas fa-pencil-alt"></fa-icon></label>
+	<label><input type="radio" id="erase" name="action" /><fa-icon class="fas fa-eraser"></fa-icon></label>
 	Woord: <b><span id="word"></span></b>
-	<br>
+	<br />
 	<span id="timer"></span>
 	<div id="players"></div>
 	<canvas height="800px" width="800px"></canvas>
 	<div id="chat"></div>
-	<input id="chatInput">
-	<dialog>
-	</dialog>
+	<input id="chatInput" />
+	<dialog></dialog>
 	<div id="links">
-		<a href="https://github.com/RubenNL/drraw/" target="_blank"><img src="/images/github_50px.webp"></a><br>
+		<a href="https://github.com/RubenNL/drraw/" target="_blank"><img src="/images/github_50px.webp" /></a><br />
 		<a href="/code" target="_blank">Actieve Code</a>
 	</div>
 </body>
 <style>
-	[name="action"]:checked + fa-icon {
-		background-color:red;
+	[name='action']:checked + fa-icon {
+		background-color: red;
 	}
-	[name="action"] {
-		display:none
+	[name='action'] {
+		display: none;
 	}
 	canvas {
-		border:1px solid red;
-		float:left;
+		border: 1px solid red;
+		float: left;
 	}
 	#chat {
-		overflow-y:scroll;
+		overflow-y: scroll;
 	}
 	#players {
-		float:left;
+		float: left;
 	}
 	.correct {
 		background-color: green;
@@ -59,12 +57,12 @@
 		background-color: yellow !important;
 	}
 	#links {
-		clear:both;
+		clear: both;
 		margin: 0 auto;
 		text-align: center;
 	}
 </style>
 <script type="module" src="index.js"></script>
 <script>
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+	if ('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js', {scope: '/'})
 </script>

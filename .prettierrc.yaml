@@ -1,0 +1,6 @@
+useTabs: true
+semi: false
+bracketSpacing: false
+arrowParens: 'avoid'
+singleQuote: true
+printWidth: 500

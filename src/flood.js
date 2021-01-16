@@ -5,26 +5,26 @@ function getColorAtPixel(imageData, x, y) {
 		r: data[4 * (width * y + x) + 0],
 		g: data[4 * (width * y + x) + 1],
 		b: data[4 * (width * y + x) + 2],
-		a: data[4 * (width * y + x) + 3]
+		a: data[4 * (width * y + x) + 3],
 	}
 }
 function colorStringToHexRGB(name) {
-	let fakeDiv = document.createElement("div");
-	fakeDiv.style.color = name;
-	document.body.appendChild(fakeDiv);
+	let fakeDiv = document.createElement('div')
+	fakeDiv.style.color = name
+	document.body.appendChild(fakeDiv)
 	let cs = window.getComputedStyle(fakeDiv),
-		rgb = cs.getPropertyValue("color");
-	document.body.removeChild(fakeDiv);
-	let sep = rgb.indexOf(",") > -1 ? "," : " ";
-	rgb = rgb.substr(4).split(")")[0].split(sep);
+		rgb = cs.getPropertyValue('color')
+	document.body.removeChild(fakeDiv)
+	let sep = rgb.indexOf(',') > -1 ? ',' : ' '
+	rgb = rgb.substr(4).split(')')[0].split(sep)
 	let r = (+rgb[0]).toString(16),
-	g = (+rgb[1]).toString(16),
-	b = (+rgb[2]).toString(16);
-	if (r.length == 1) r = "0" + r;
-	if (g.length == 1) g = "0" + g;
-	if (b.length == 1) b = "0" + b;
+		g = (+rgb[1]).toString(16),
+		b = (+rgb[2]).toString(16)
+	if (r.length == 1) r = '0' + r
+	if (g.length == 1) g = '0' + g
+	if (b.length == 1) b = '0' + b
 
-	return {r,g,b}
+	return {r, g, b}
 }
 function setColorAtPixel(imageData, color, x, y) {
 	const {width, data} = imageData
@@ -38,7 +38,7 @@ function colorMatch(a, b) {
 }
 
 function floodFill(imageData, newColor, x, y) {
-	const {width, height, data} = imageData
+	const {width, height} = imageData
 	const stack = []
 	const baseColor = getColorAtPixel(imageData, x, y)
 	let operator = {x, y}
@@ -87,11 +87,11 @@ function floodFill(imageData, newColor, x, y) {
 	}
 }
 
-export default function({pos,color},canvas) {
-	const ctx = canvas.getContext('2d');
+export default function ({pos, color}, canvas) {
+	const ctx = canvas.getContext('2d')
 	const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-	color=colorStringToHexRGB(color)
-	const col = {r: parseInt(color.r,16), g: parseInt(color.g,16),b: parseInt(color.b,16), a: 0xff}
+	color = colorStringToHexRGB(color)
+	const col = {r: parseInt(color.r, 16), g: parseInt(color.g, 16), b: parseInt(color.b, 16), a: 0xff}
 	floodFill(imageData, col, Math.round(pos.x), Math.round(pos.y))
 	ctx.putImageData(imageData, 0, 0)
 }
