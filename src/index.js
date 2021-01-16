@@ -15,8 +15,8 @@ if(!name) {
 	throw new Error()
 }
 window.sessionStorage.setItem('name',name)
-document.querySelector('#color').innerHTML=['red','blue','green','yellow','black'].map(color=>`<option value="${color}">${color}</option>`).join('')
-document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20,50,100,200,400].map(width=>`<option value="${width}">${width}</option>`).join('')
+document.querySelector('#color').innerHTML=['red','blue','green','yellow','black'].map(color=>`<label style="background-color: ${color}"><input name="color" type="radio" value="${color}"></label>`).join('')
+document.querySelector('#width').innerHTML=[1,2,3,4,5,10,20,50,100,200,400].map(width=>`<option ${width==20?"selected":""} value="${width}">${width}</option>`).join('')
 document.querySelector('#start').onclick=()=>{
 	const timer=parseInt(prompt('seconde per beurt?'))
 	if(!timer||timer<5) {
@@ -43,6 +43,7 @@ ws.addEventListener('close',event=>{
 	if(event.reason) alert('verbinding verbroken:\n'+event.reason)
 	else alert('verbinding verbroken, geen reason opgegeven.')
 })
+let drawer=false;
 ws.addEventListener('message',event=>{
 	const data=JSON.parse(event.data)
 	if(data.id) id=data.id;
@@ -59,12 +60,14 @@ ws.addEventListener('message',event=>{
 		chatDiv.scrollTop = chatDiv.scrollHeight;
 	}
 	if(data.players) {
-		document.querySelector('#players').innerHTML=data.players.map(player=>`
-			<div class="player ${player.id==id?"me":"other"} ${player.correct?"correct":"incorrect"} ${player.drawer?"drawer":"notdrawing"}">
+		document.querySelector('#players').innerHTML=data.players.map(player=>{
+			if(player.id==id) drawer=player.drawer;
+			return `
+			<div class="player ${drawer?"me":"other"} ${player.correct?"correct":"incorrect"} ${player.drawer?"drawer":"notdrawing"}">
 				name: ${player.name}<br>
 				score: ${player.score}<br>
 			</div>
-		`).join('')
+		`}).join('')
 	}
 	switch(data.action) {
 		case 'start':
@@ -104,8 +107,9 @@ function setPosition(evt) {
 	
 }
 function click(evt) {
+	if(!drawer) return
 	setPosition(evt)
-	let color=document.querySelector('#color').value;
+	let color=document.querySelector('[name="color"]:checked').value;
 	if(document.querySelector('#erase').checked) color='white'
 	if(document.querySelector('#flood').checked) ws.send({draw:{
 		action:'flood',
@@ -120,9 +124,10 @@ function click(evt) {
 	}})
 }
 function send(e) {
+	if(!drawer) return;
 	if (e.buttons !== 1) return;
 	if(document.querySelector('#flood').checked) return
-	let color=document.querySelector('#color').value;
+	let color=document.querySelector('[name="color"]:checked').value;
 	if(document.querySelector('#erase').checked) color='white'
 	const first=JSON.parse(JSON.stringify(pos));
 	setPosition(e);
