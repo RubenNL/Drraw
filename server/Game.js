@@ -58,6 +58,7 @@ module.exports = class Game {
 					this.sendAll({timer: this.timer})
 					if (this.timer == 0) this.endDraw()
 				}, 1000)
+				this.sendPlayerStats()
 			}
 			if (message.start && !this.drawer) {
 				this.startTimer = message.start.timer
@@ -91,7 +92,6 @@ module.exports = class Game {
 		this.drawer.send({words: grabWords(3)})
 		this.timer = this.startTimer
 		this.sendAll({timer: this.drawer.name + ' Kiest een woord...', chat: {from: 'GAME', message: this.drawer.name + ' Kiest een woord...'}})
-		this.sendPlayerStats()
 	}
 	endDraw() {
 		clearInterval(this.interval)

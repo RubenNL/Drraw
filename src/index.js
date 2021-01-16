@@ -61,10 +61,10 @@ ws.addEventListener('message', event => {
 	}
 	if (data.players) {
 		document.querySelector('#players').innerHTML = data.players
-			.map(player => {
-				if (player.id == id) drawer = player.drawer
+			.map((player, playerId) => {
+				if (playerId == id) drawer = player.drawer
 				return `
-			<div class="player ${drawer ? 'me' : 'other'} ${player.correct ? 'correct' : 'incorrect'} ${player.drawer ? 'drawer' : 'notdrawing'}">
+			<div class="player ${playerId == id ? 'me' : 'other'} ${player.correct ? 'correct' : 'incorrect'} ${player.drawer ? 'drawer' : 'notdrawing'}">
 				name: ${player.name}<br>
 				score: ${player.score}<br>
 			</div>
