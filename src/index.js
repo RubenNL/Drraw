@@ -151,7 +151,6 @@ function send(e) {
 	})
 }
 function draw({action, ...data}) {
-	console.log(action)
 	if (action == 'flood') flood(data, canvas)
 	if (action == 'line') drawLine(data)
 	if (action == 'dot') drawDot(data)

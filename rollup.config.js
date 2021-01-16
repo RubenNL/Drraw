@@ -5,7 +5,6 @@ import copy from 'rollup-plugin-copy'
 import {nodeResolve} from '@rollup/plugin-node-resolve'
 import minifyHTML from 'rollup-plugin-minify-html-literals'
 const production = process.env.NODE_ENV == 'production'
-console.log('ENVIRONMENT:', production ? 'prod' : 'dev')
 export default {
 	input: 'src/index.js',
 	treeshake: production,
