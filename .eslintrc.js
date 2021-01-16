@@ -10,7 +10,7 @@ module.exports = {
 		sourceType: 'module',
 	},
 	rules: {
-		"no-console": "warn",
-		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+		'no-console': 'warn',
+		'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
 	},
 }
