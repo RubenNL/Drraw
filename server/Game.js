@@ -51,8 +51,9 @@ module.exports = class Game {
 						.map(() => '_')
 						.join(' '),
 					chat: {from: 'GAME', message: player.name + ' heeft een woord gekozen!'},
+					drawer: {status: false},
 				})
-				this.drawer.send({word: this.word})
+				this.drawer.send({word: this.word, drawer: {status: true}})
 				this.interval = setInterval(() => {
 					this.timer--
 					this.sendAll({timer: this.timer})

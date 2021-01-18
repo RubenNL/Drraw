@@ -61,17 +61,17 @@ ws.addEventListener('message', event => {
 	}
 	if (data.players) {
 		document.querySelector('#players').innerHTML = data.players
-			.map((player, playerId) => {
-				if (playerId == id) drawer = player.drawer
-				return `
+			.map(
+				(player, playerId) => `
 			<div class="player ${playerId == id ? 'me' : 'other'} ${player.correct ? 'correct' : 'incorrect'} ${player.drawer ? 'drawer' : 'notdrawing'}">
 				name: ${player.name}<br>
 				score: ${player.score}<br>
 			</div>
 		`
-			})
+			)
 			.join('')
 	}
+	if (data.drawer) drawer = data.drawer.status
 	switch (data.action) {
 		case 'start':
 			document.querySelector('#start').disabled = true
