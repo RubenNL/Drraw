@@ -5,13 +5,13 @@ module.exports = class AutoDisconnect {
 		const resetTimeout = this.resetTimeout.bind(this)
 		this.ws.send = (_super => {
 			return function () {
-				resetTimeout()
+				if (arguments[0].length > 3) resetTimeout()
 				return _super.apply(this, arguments)
 			}
 		})(this.ws.send)
 		this.resetTimeout()
 		this.ws.on('message', message => {
-			if (message.length > 0) this.resetTimeout()
+			if (message.length > 3) this.resetTimeout()
 		})
 		this.ws.on('close', () => clearTimeout(this.resetTimeout))
 	}
