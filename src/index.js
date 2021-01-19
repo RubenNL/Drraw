@@ -44,6 +44,11 @@ ws.addEventListener('close', event => {
 	else alert('verbinding verbroken, geen reason opgegeven.')
 })
 let drawer = false
+function stripHtml(html) {
+	let tmp = document.createElement('DIV')
+	tmp.innerHTML = html
+	return tmp.textContent || tmp.innerText || ''
+}
 ws.addEventListener('message', event => {
 	const data = JSON.parse(event.data)
 	if (data.id) id = data.id
@@ -56,7 +61,7 @@ ws.addEventListener('message', event => {
 	if (data.timer) document.querySelector('#timer').innerText = data.timer
 	if (data.chat) {
 		const chatDiv = document.querySelector('#chat')
-		chatDiv.innerHTML += `<span><b>${data.chat.from}</b>: ${data.chat.message}</b></span><br>`
+		chatDiv.innerHTML += `<span><b>${data.chat.from}</b>: ${stripHtml(data.chat.message)}</b></span><br>`
 		chatDiv.scrollTop = chatDiv.scrollHeight
 	}
 	if (data.players) {
