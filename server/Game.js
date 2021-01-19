@@ -81,13 +81,14 @@ module.exports = class Game {
 			if (player == this.drawer) this.nextDrawer()
 		})
 	}
-	nextDrawer() {
+	nextDrawer(left) {
 		clearTimeout(this.interval)
 		if (this.players.length == 0) {
 			this.delete()
 			return
 		}
-		let drawerId = this.players.indexOf(this.drawer) + 1
+		let drawerId = this.players.indexOf(this.drawer)
+		if (!left) drawerId++
 		if (!this.players[drawerId]) drawerId = 0
 		this.drawer = this.players[drawerId]
 		this.drawer.send({words: grabWords(3)})
