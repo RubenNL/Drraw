@@ -1,29 +1,37 @@
 import {LitElement, html, css} from 'lit-element'
 
 export class AppChat extends LitElement {
-	render() {
-		return html`<div id="chat"></div>
-			<input id="chatInput" />`
+	static get properties() {
+		return {
+			items: {type: Array},
+		}
 	}
-	stripHtml(html) {
-		let tmp = document.createElement('DIV')
-		tmp.innerHTML = html
-		return tmp.textContent || tmp.innerText || ''
+
+	constructor() {
+		super()
+		this.items = []
+	}
+	render() {
+		return html`<div id="chat">${this.items.map(item => html`<span><b>${item.from}</b>: ${item.message}</b></span><br>`)}</div>
+			<input id="chatInput" @keydown="${this.keydown}" />`
 	}
 	onMessage(data) {
 		if (data.chat) {
-			const chatDiv = this.shadowRoot.querySelector('#chat')
-			chatDiv.innerHTML += `<span><b>${data.chat.from}</b>: ${this.stripHtml(data.chat.message)}</b></span><br>`
-			chatDiv.scrollTop = chatDiv.scrollHeight
+			this.items.push(data.chat)
+			this.requestUpdate()
 		}
+	}
+	updated() {
+		const chatDiv = this.shadowRoot.querySelector('#chat')
+		chatDiv.scrollTop = chatDiv.scrollHeight
 	}
 	firstUpdated() {
 		this.shadowRoot.querySelector('#chat').style.height = document.querySelector('canvas').height - this.shadowRoot.querySelector('#chatInput').offsetHeight
-		this.shadowRoot.querySelector('#chatInput').onkeydown = event => {
-			if (event.key != 'Enter') return
-			this.dispatchEvent(new CustomEvent('ws-send', {detail: {chat: this.shadowRoot.querySelector('#chatInput').value}}))
-			this.shadowRoot.querySelector('#chatInput').value = ''
-		}
+	}
+	keydown(event) {
+		if (event.key != 'Enter') return
+		this.dispatchEvent(new CustomEvent('ws-send', {detail: {chat: event.target.value}}))
+		event.target.value = ''
 	}
 	static get styles() {
 		return css`
