@@ -1,3 +1,4 @@
+import 'js/app-chat.js'
 import dialogPolyfill from 'dialog-polyfill'
 import flood from './flood.js'
 import 'fa-icons'
@@ -26,11 +27,6 @@ document.querySelector('#start').onclick = () => {
 	ws.send({start: {timer}})
 }
 document.querySelector('#clear').onclick = () => ws.send({gameAction: 'clear'})
-document.querySelector('#chatInput').onkeydown = event => {
-	if (event.key != 'Enter') return
-	ws.send({chat: document.querySelector('#chatInput').value})
-	document.querySelector('#chatInput').value = ''
-}
 let id = 0
 const ws = new WebSocket((location.protocol == 'http:' ? 'ws://' : 'wss://') + (location + '').split('/')[2] + '/?game=' + gameId)
 ws.oldSend = ws.send
@@ -44,11 +40,6 @@ ws.addEventListener('close', event => {
 	else alert('verbinding verbroken, geen reason opgegeven.')
 })
 let drawer = false
-function stripHtml(html) {
-	let tmp = document.createElement('DIV')
-	tmp.innerHTML = html
-	return tmp.textContent || tmp.innerText || ''
-}
 ws.addEventListener('message', event => {
 	const data = JSON.parse(event.data)
 	if (data.id) id = data.id
@@ -56,13 +47,6 @@ ws.addEventListener('message', event => {
 	if (data.words) {
 		dialog.innerHTML = data.words.map(word => `<button onclick="wordClick('${word}')">${word}</button>`).join('')
 		dialog.showModal()
-	}
-	if (data.word) document.querySelector('#word').innerText = data.word
-	if (data.timer) document.querySelector('#timer').innerText = data.timer
-	if (data.chat) {
-		const chatDiv = document.querySelector('#chat')
-		chatDiv.innerHTML += `<span><b>${data.chat.from}</b>: ${stripHtml(data.chat.message)}</b></span><br>`
-		chatDiv.scrollTop = chatDiv.scrollHeight
 	}
 	if (data.players) {
 		document.querySelector('#players').innerHTML = data.players
@@ -76,6 +60,8 @@ ws.addEventListener('message', event => {
 			)
 			.join('')
 	}
+	if (data.word) document.querySelector('#word').innerText = data.word
+	if (data.timer) document.querySelector('#timer').innerText = data.timer
 	if (data.drawer) drawer = data.drawer.status
 	switch (data.action) {
 		case 'start':
@@ -87,12 +73,14 @@ ws.addEventListener('message', event => {
 		case 'endDraw':
 			break
 	}
+	document.querySelector('app-chat').onMessage(data)
 })
 window.wordClick = word => {
 	ws.send({word})
 	dialog.close()
 }
-document.querySelector('#chat').style.height = document.querySelector('canvas').height - document.querySelector('#chatInput').offsetHeight
+document.querySelector('app-chat').addEventListener('ws-send', e => ws.send(e.detail))
+document.querySelector('app-chat').style.height = document.querySelector('canvas').height
 document.querySelector('#players').style.height = document.querySelector('canvas').height
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
