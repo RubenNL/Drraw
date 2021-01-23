@@ -23,9 +23,9 @@
 	Woord: <b><span id="word"></span></b>
 	<br />
 	<span id="timer"></span>
-	<div id="players"></div>
+	<app-playerlist></app-playerlist>
 	<canvas height="800px" width="800px"></canvas>
-	<app-chat />
+	<app-chat></app-chat>
 	<dialog></dialog>
 	<div id="links">
 		<a href="https://github.com/RubenNL/drraw/" target="_blank"><img src="/images/github_50px.webp" /></a><br />
@@ -43,14 +43,8 @@
 		border: 1px solid red;
 		float: left;
 	}
-	#players {
+	app-playerlist {
 		float: left;
-	}
-	.correct {
-		background-color: green;
-	}
-	.drawer {
-		background-color: yellow !important;
 	}
 	#links {
 		clear: both;

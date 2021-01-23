@@ -1,4 +1,5 @@
 import 'js/app-chat.js'
+import 'js/app-playerlist.js'
 import dialogPolyfill from 'dialog-polyfill'
 import flood from './flood.js'
 import 'fa-icons'
@@ -27,7 +28,6 @@ document.querySelector('#start').onclick = () => {
 	ws.send({start: {timer}})
 }
 document.querySelector('#clear').onclick = () => ws.send({gameAction: 'clear'})
-let id = 0
 const ws = new WebSocket((location.protocol == 'http:' ? 'ws://' : 'wss://') + (location + '').split('/')[2] + '/?game=' + gameId)
 ws.oldSend = ws.send
 ws.send = message => ws.oldSend(JSON.stringify(message))
@@ -42,23 +42,10 @@ ws.addEventListener('close', event => {
 let drawer = false
 ws.addEventListener('message', event => {
 	const data = JSON.parse(event.data)
-	if (data.id) id = data.id
 	if (data.draw) draw(data.draw)
 	if (data.words) {
 		dialog.innerHTML = data.words.map(word => `<button onclick="wordClick('${word}')">${word}</button>`).join('')
 		dialog.showModal()
-	}
-	if (data.players) {
-		document.querySelector('#players').innerHTML = data.players
-			.map(
-				(player, playerId) => `
-			<div class="player ${playerId == id ? 'me' : 'other'} ${player.correct ? 'correct' : 'incorrect'} ${player.drawer ? 'drawer' : 'notdrawing'}">
-				name: ${player.name}<br>
-				score: ${player.score}<br>
-			</div>
-		`
-			)
-			.join('')
 	}
 	if (data.word) document.querySelector('#word').innerText = data.word
 	if (data.timer) document.querySelector('#timer').innerText = data.timer
@@ -74,6 +61,7 @@ ws.addEventListener('message', event => {
 			break
 	}
 	document.querySelector('app-chat').onMessage(data)
+	document.querySelector('app-playerlist').onMessage(data)
 })
 window.wordClick = word => {
 	ws.send({word})
@@ -81,7 +69,7 @@ window.wordClick = word => {
 }
 document.querySelector('app-chat').addEventListener('ws-send', e => ws.send(e.detail))
 document.querySelector('app-chat').style.height = document.querySelector('canvas').height
-document.querySelector('#players').style.height = document.querySelector('canvas').height
+document.querySelector('app-playerlist').style.height = document.querySelector('canvas').height
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 let pos = {x: 0, y: 0}
