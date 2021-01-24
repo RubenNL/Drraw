@@ -26,7 +26,7 @@ export class AppChat extends LitElement {
 		chatDiv.scrollTop = chatDiv.scrollHeight
 	}
 	firstUpdated() {
-		this.shadowRoot.querySelector('#chat').style.height = document.querySelector('canvas').height - this.shadowRoot.querySelector('#chatInput').offsetHeight
+		this.shadowRoot.querySelector('#chat').style.height = window.canvassize - this.shadowRoot.querySelector('#chatInput').offsetHeight
 	}
 	keydown(event) {
 		if (event.key != 'Enter') return

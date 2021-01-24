@@ -18,16 +18,7 @@
 	Woord: <b><span id="word"></span></b>
 	<span id="timer"></span>
 	<app-playerlist></app-playerlist>
-	<div id="canvasdiv">
-		<div id="canvasoptions">
-			<button id="clear">clear screen</button>
-			kleur:<span id="color"></span> lijndikte:<select id="width"></select>
-			<label><input type="radio" id="flood" name="action" /><fa-icon class="fas fa-fill"></fa-icon></label>
-			<label><input type="radio" id="draw" name="action" checked /><fa-icon class="fas fa-pencil-alt"></fa-icon></label>
-			<label><input type="radio" id="erase" name="action" /><fa-icon class="fas fa-eraser"></fa-icon></label>
-		</div>
-		<canvas height="800px" width="800px"></canvas>
-	</div>
+	<app-canvas></app-canvas>
 	<app-chat></app-chat>
 	<dialog></dialog>
 	<div id="links">
@@ -36,19 +27,8 @@
 	</div>
 </body>
 <style>
-	[name='action']:checked + fa-icon {
-		background-color: red;
-	}
-	[name='action'] {
-		display: none;
-	}
-	canvas {
-		border: 1px solid red;
-	}
-	#canvasdiv {
-		float: left;
-	}
-	app-playerlist {
+	app-playerlist,
+	app-canvas {
 		float: left;
 	}
 	#links {
