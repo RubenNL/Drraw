@@ -12,14 +12,13 @@ export class AppCanvas extends LitElement {
 		return html`<div id="canvasoptions">
 				<button id="clear" @click="${() => this.wssend({gameAction: 'clear'})}">clear screen</button>
 				kleur:<span>${['red', 'blue', 'green', 'yellow', 'black', 'brown', 'white'].map(color => html`<label style="background-color: ${color}"><input name="color" type="radio" value="${color}" /></label>`)}</span> lijndikte:<select id="width">
-					${[1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 400].map(width => html`<option value="${width}">${width}</option>`)}
+					${[1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 400].map(width => html`<option ?selected=${width == 20} value="${width}">${width}</option>`)}
 				</select>
 				<label><input type="radio" id="flood" name="action" /><fa-icon class="fas fa-fill"></fa-icon></label>
 				<label><input type="radio" id="draw" name="action" checked /><fa-icon class="fas fa-pencil-alt"></fa-icon></label>
 				<label><input type="radio" id="erase" name="action" /><fa-icon class="fas fa-eraser"></fa-icon></label>
 			</div>
 			<canvas height="${window.canvassize}px" width="${window.canvassize}px" @mousemove="${this.send}" @touchmove="${e => this.send({buttons: 1, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY})}" @touchstart="${e => this.setPosition({clientX: e.touches[0].clientX, clientY: e.touches[0].clientY})}" @mousedown="${this.setPosition}" @mouseenter="${this.setPosition}" @click="${this.click}"></canvas>`
-		//${width == 20 ? 'selected' : ''}
 	}
 	setPosition(evt) {
 		if (evt.buttons !== 1) return
