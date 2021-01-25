@@ -3,6 +3,12 @@ import flood from './flood.js'
 import 'fa-icons'
 
 export class AppCanvas extends LitElement {
+	static get properties() {
+		return {
+			customColor: {type: String},
+		}
+	}
+
 	constructor() {
 		super()
 		this.pos = {x: 0, y: 0}
@@ -11,7 +17,11 @@ export class AppCanvas extends LitElement {
 	render() {
 		return html`<div id="canvasoptions">
 				<button id="clear" @click="${() => this.wssend({gameAction: 'clear'})}">clear screen</button>
-				kleur:<span>${['red', 'blue', 'green', 'yellow', 'black', 'brown', 'white'].map(color => html`<label style="background-color: ${color}"><input name="color" type="radio" value="${color}" ?checked=${color == 'black'} /></label>`)}</span> lijndikte:<select id="width">
+				kleur:<span>
+					${['red', 'blue', 'green', 'yellow', 'black', 'brown', 'white'].map(color => html`<label style="background-color: ${color}"><input name="color" type="radio" value="${color}" ?checked=${color == 'black'} /></label>`)}
+					<input name="color" type="radio" value="${this.customColor}" /><input type="color" @change="${e => (this.customColor = e.target.value)}" />
+				</span>
+				lijndikte:<select id="width">
 					${[1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 400].map(width => html`<option ?selected=${width == 20} value="${width}">${width}</option>`)}
 				</select>
 				<label><input type="radio" id="flood" name="action" /><fa-icon class="fas fa-fill"></fa-icon></label>
