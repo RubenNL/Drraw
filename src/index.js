@@ -39,7 +39,7 @@ ws.addEventListener('close', event => {
 ws.addEventListener('message', event => {
 	const data = JSON.parse(event.data)
 	if (data.words) {
-		dialog.innerHTML = data.words.map(word => `<button onclick="wordClick('${word}')">${word}</button>`).join('')
+		dialog.innerHTML = '<button style="display:none"></button>' + data.words.map(word => `<button tabindex="-1" onclick="wordClick('${word}')">${word}</button>`).join('')
 		dialog.showModal()
 	}
 	if (data.word) document.querySelector('#word').innerText = data.word

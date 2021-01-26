@@ -3,6 +3,12 @@ import flood from './flood.js'
 import 'fa-icons'
 
 export class AppCanvas extends LitElement {
+	static get properties() {
+		return {
+			customColor: {type: String},
+		}
+	}
+
 	constructor() {
 		super()
 		this.pos = {x: 0, y: 0}
@@ -11,15 +17,29 @@ export class AppCanvas extends LitElement {
 	render() {
 		return html`<div id="canvasoptions">
 				<button id="clear" @click="${() => this.wssend({gameAction: 'clear'})}">clear screen</button>
-				kleur:<span>${['red', 'blue', 'green', 'yellow', 'black', 'brown', 'white'].map(color => html`<label style="background-color: ${color}"><input name="color" type="radio" value="${color}" /></label>`)}</span> lijndikte:<select id="width">
-					${[1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 400].map(width => html`<option value="${width}">${width}</option>`)}
+				kleur:<span>
+					${['red', 'blue', 'green', 'yellow', 'black', 'brown', 'white'].map(color => html`<label style="background-color: ${color}"><input name="color" type="radio" value="${color}" @click=${this.updateCursor} ?checked=${color == 'black'} /></label>`)}
+					<input name="color" type="radio" value="${this.customColor}" @click=${this.updateCursor} /><input
+						type="color"
+						@change="${e => {
+							this.customColor = e.target.value
+							this.updateCursor()
+						}}"
+					/>
+				</span>
+				lijndikte:<select id="width">
+					${[1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 400].map(width => html`<option @click=${this.updateCursor} ?selected=${width == 20} value="${width}">${width}</option>`)}
 				</select>
 				<label><input type="radio" id="flood" name="action" /><fa-icon class="fas fa-fill"></fa-icon></label>
 				<label><input type="radio" id="draw" name="action" checked /><fa-icon class="fas fa-pencil-alt"></fa-icon></label>
 				<label><input type="radio" id="erase" name="action" /><fa-icon class="fas fa-eraser"></fa-icon></label>
 			</div>
 			<canvas height="${window.canvassize}px" width="${window.canvassize}px" @mousemove="${this.send}" @touchmove="${e => this.send({buttons: 1, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY})}" @touchstart="${e => this.setPosition({clientX: e.touches[0].clientX, clientY: e.touches[0].clientY})}" @mousedown="${this.setPosition}" @mouseenter="${this.setPosition}" @click="${this.click}"></canvas>`
-		//${width == 20 ? 'selected' : ''}
+	}
+	updateCursor() {
+		this.size = this.shadowRoot.querySelector('#width').value
+		this.color = this.shadowRoot.querySelector('[name="color"]:checked').value.replace('#', '%23')
+		this.shadowRoot.querySelector('canvas').style.cursor = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='${this.size * 2}' width='${this.size * 2}'%3E%3Ccircle cx='${this.size}' cy='${this.size}' r='${this.size / 2}' fill='${this.color}' /%3E%3C/svg%3E") ${this.size} ${this.size}, default`
 	}
 	setPosition(evt) {
 		if (evt.buttons !== 1) return
