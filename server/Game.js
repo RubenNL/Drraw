@@ -24,7 +24,7 @@ module.exports = class Game {
 			}
 			if (message.chat) {
 				if (message.chat == this.word) {
-					if (player.correct) player.send({chat: {from: 'GAME', message: 'nope. geen gratis punten :)'}})
+					if (player.correct || this.timer == 0) player.send({chat: {from: 'GAME', message: 'nope. geen gratis punten :)'}})
 					else {
 						this.sendAll({chat: {from: 'GAME', message: player.name + ' heeft het juiste woord geraden!'}})
 						player.score += this.timer
@@ -40,6 +40,7 @@ module.exports = class Game {
 				this.sendAll({draw: message.draw})
 			}
 			if (message.word && this.drawer == player) {
+				this.timer = this.startTimer
 				this.replay = []
 				this.word = message.word
 				this.players.forEach(player => (player.correct = false))
@@ -92,7 +93,6 @@ module.exports = class Game {
 		if (!this.players[drawerId]) drawerId = 0
 		this.drawer = this.players[drawerId]
 		this.drawer.send({words: grabWords(3)})
-		this.timer = this.startTimer
 		this.sendAll({timer: this.drawer.name + ' Kiest een woord...', chat: {from: 'GAME', message: this.drawer.name + ' Kiest een woord...'}})
 	}
 	endDraw() {
