@@ -26,6 +26,7 @@ function download() {
 word.count().then(count => {
 	if (count == 0) {
 		return download().then(words => {
+			words = words.filter(word => word.match(/^[a-z]+$/))
 			totalWords = words.length
 			return word.bulkCreate(
 				words.map(word => {
