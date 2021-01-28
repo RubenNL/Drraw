@@ -16,6 +16,7 @@ export default {
 	},
 	watch: {
 		exclude: 'node_modules/**, server/**',
+		clearScreen: false,
 	},
 	preserveEntrySignatures: 'allow-extension',
 	plugins: [
