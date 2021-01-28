@@ -92,7 +92,7 @@ module.exports = class Game {
 		if (!left) drawerId++
 		if (!this.players[drawerId]) drawerId = 0
 		this.drawer = this.players[drawerId]
-		this.drawer.send({words: grabWords(3)})
+		grabWords(3).then(words => this.drawer.send({words}))
 		this.sendAll({timer: this.drawer.name + ' Kiest een woord...', chat: {from: 'GAME', message: this.drawer.name + ' Kiest een woord...'}})
 	}
 	endDraw() {
