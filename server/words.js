@@ -1,5 +1,5 @@
 const {Sequelize, DataTypes} = require('sequelize')
-const sequelize = new Sequelize(process.env.DATABASE_URL ? process.env.DATABASE_URL : 'sqlite:data.db')
+const sequelize = new Sequelize('sqlite:data.db')
 const word = sequelize.define('word', {word: DataTypes.STRING})
 sequelize.sync()
 let totalWords = 0

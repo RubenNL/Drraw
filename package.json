@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "rollup -c",
+    "build-rollup": "rollup -c",
+    "build-words": "node server/words.js",
+    "build": "run-p build-rollup build-words",
     "watch": "rollup -c --watch",
     "local": "run-p watch start",
     "start": "node server.js",
@@ -19,9 +21,9 @@
   "dependencies": {
     "compression": "^1.7.4",
     "express": "^4.17.1",
-    "pg": "^8.5.1",
     "sequelize": "^6.5.0",
     "serve-index": "^1.9.1",
+    "sqlite3": "^5.0.1",
     "ws": "^7.4.2"
   },
   "devDependencies": {
@@ -38,8 +40,7 @@
     "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-minify-html-literals": "^1.2.5",
-    "rollup-plugin-terser": "^7.0.2",
-    "sqlite3": "^5.0.1"
+    "rollup-plugin-terser": "^7.0.2"
   },
   "repository": {
     "type": "git",
