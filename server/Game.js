@@ -33,7 +33,8 @@ module.exports = class Game {
 						this.sendPlayerStats()
 						if (this.players.every(player => player.correct)) this.endDraw()
 					}
-				} else this.sendAll({chat: {from: player.name, message: message.chat}})
+				} else if (message.chat.length > 50) player.send({chat: {from: 'GAME', message: 'geen spam pls...'}})
+				else this.sendAll({chat: {from: player.name, message: message.chat}})
 			}
 			if (message.draw && this.drawer == player) {
 				this.replay.push(message.draw)
