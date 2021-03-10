@@ -13,7 +13,7 @@ export class AppChat extends LitElement {
 	}
 	render() {
 		return html`<div id="chat">${this.items.map(item => html`<span><b>${item.from}</b>: ${item.message}</b></span><br>`)}</div>
-			<input id="chatInput" @keydown="${this.keydown}" maxlength="5" />`
+			<input id="chatInput" @keydown="${this.keydown}" maxlength="50" />`
 	}
 	onMessage(data) {
 		if (data.chat) {
