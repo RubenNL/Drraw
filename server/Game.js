@@ -10,6 +10,7 @@ module.exports = class Game {
 		this.startTimer = 0
 	}
 	addPlayer(player) {
+		player.lastMessageSend = +new Date()
 		player.score = 0
 		this.players.push(player)
 		player.send({id: this.players.indexOf(player)})
@@ -33,8 +34,12 @@ module.exports = class Game {
 						this.sendPlayerStats()
 						if (this.players.every(player => player.correct)) this.endDraw()
 					}
-				} else if (message.chat.length > 50) player.send({chat: {from: 'GAME', message: 'geen spam pls...'}})
-				else this.sendAll({chat: {from: player.name, message: message.chat}})
+				} else if (message.chat.length > 50) player.send({chat: {from: 'GAME', message: 'Te lang bericht!'}})
+				else if (+new Date() - player.lastMessageSend < 500) player.send({chat: {from: 'GAME', message: 'geen spam pls...'}})
+				else {
+					this.sendAll({chat: {from: player.name, message: message.chat}})
+					player.lastMessageSend = +new Date()
+				}
 			}
 			if (message.draw && this.drawer == player) {
 				this.replay.push(message.draw)
