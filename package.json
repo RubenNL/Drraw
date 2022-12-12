@@ -23,7 +23,7 @@
     "express": "^4.17.1",
     "sequelize": "^6.5.0",
     "serve-index": "^1.9.1",
-    "sqlite3": "^5.0.1",
+    "sqlite3": "^5.1.4",
     "ws": "^7.4.2"
   },
   "devDependencies": {
